@@ -65,20 +65,20 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)\build\bin.$(Configuration).$(Platform)</OutDir>
+    <OutDir>$(SolutionDir)\bin</OutDir>
     <IntDir>$(SolutionDir)\build\obj.$(Configuration).$(Platform)</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)\build\bin.$(Configuration).$(Platform)</OutDir>
+    <OutDir>$(SolutionDir)\bin</OutDir>
     <IntDir>$(SolutionDir)\build\obj.$(Configuration).$(Platform)</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)\build\bin.$(Configuration).$(Platform)</OutDir>
+    <OutDir>$(SolutionDir)\bin</OutDir>
     <IntDir>$(SolutionDir)\build\obj.$(Configuration).$(Platform)</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)\build\bin.$(Configuration).$(Platform)</OutDir>
+    <OutDir>$(SolutionDir)\bin</OutDir>
     <IntDir>$(SolutionDir)\build\obj.$(Configuration).$(Platform)</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -157,6 +157,10 @@
     <ClCompile Include="src\NewMath.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\FMOD_SOUND_IMPLEMENTATION.h" />
+    <ClInclude Include="src\GLFW_WINDOW_SLOTS_IMPLEMENTATION.h" />
+    <ClInclude Include="src\GLOBALS.h" />
+    <ClInclude Include="src\MATH_MACRO_IMPLEMENTATION.h" />
     <ClInclude Include="src\NewMath.h" />
     <ClInclude Include="utility.h" />
     <ClInclude Include="includes\learnopengl\model.h" />

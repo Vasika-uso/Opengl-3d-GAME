@@ -6,4 +6,3 @@ Any *contribution* is welcome.
 Just open the .sln file (Visual Studio 2022 was used)
 and select your configuration & platform 
 and press Local Windows Debugger.     
-"# Opengl-3d-GAME" 
