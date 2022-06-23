@@ -5,8 +5,8 @@
 #include "utility.h"
 #include "src/GLFW_WINDOW_SLOTS_IMPLEMENTATION.h"
 #include "src/FMOD_SOUND_IMPLEMENTATION.h"
-
-
+#include "src/GLOBALS.h"
+#include "src/MATH_MACRO_IMPLEMENTATION.h"
 
 
 
@@ -316,14 +316,6 @@ int main()
 	//create building
 	Model cottage("resources/models/cottage.obj" , "resources/models/cottage.png");
 	Model church("resources/models/untitled.obj", "resources/models/church.jpg");
-
-
-	
-
-
-
-
-
 
 
 	//load gun texture
