@@ -10,10 +10,19 @@
 
 
 Text* logger;
-int log_offset__ = 0;
+std::vector<std::string> log_text;
+
 inline void LOG(std::string text) {
-	logger->drawText(text, 5, (1050 - log_offset__), 0.5f, vec3(0.0f, 0.0f, 0.0f));
-	log_offset__ += 50;
+	log_text.push_back(text);
+}
+inline void WRITE_LOG() {
+	int log_offset__ = 0;
+	for (int i = 0; i < log_text.size(); i++) {
+		logger->drawText(log_text[i], 5, (1050 - log_offset__), 0.4f, vec3(0.0f, 0.0f, 0.0f));
+		log_offset__ += 20;
+	}
+	log_text.clear();
+	
 }
 
 
@@ -478,7 +487,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear depth
 		glEnable(GL_DEPTH_TEST); // enable depth testing
 //
-		LOG("sexy");
+		
 		// activate shader
 		ourShader.use();
 
@@ -760,12 +769,13 @@ int main()
 			ourShader.setMat4("view", gunView);
 			deagle.Draw(ourShader);
 		}
-
+		
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
+		WRITE_LOG();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-		log_offset__ = 0;
+		
 	}
 
 	// optional: de-allocate all resources once they've outlived their purpose:
