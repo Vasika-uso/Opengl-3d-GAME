@@ -155,13 +155,16 @@
     <ClCompile Include="includes\stb_image.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\NewMath.cpp" />
+    <ClCompile Include="src\TEXT.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\FMOD_SOUND_IMPLEMENTATION.h" />
     <ClInclude Include="src\GLFW_WINDOW_SLOTS_IMPLEMENTATION.h" />
     <ClInclude Include="src\GLOBALS.h" />
+    <ClInclude Include="src\LOGGER.h" />
     <ClInclude Include="src\MATH_MACRO_IMPLEMENTATION.h" />
     <ClInclude Include="src\NewMath.h" />
+    <ClInclude Include="src\TEXT.h" />
     <ClInclude Include="utility.h" />
     <ClInclude Include="includes\learnopengl\model.h" />
   </ItemGroup>
@@ -170,6 +173,18 @@
     <None Include="resources\shaders\1.model_vertex.glsl" />
     <None Include="resources\shaders\7.4.camera_frag.glsl" />
     <None Include="resources\shaders\7.4.camera_vertex.glsl" />
+    <None Include="resources\shaders\color_frag.glsl" />
+    <None Include="resources\shaders\color_vertex.glsl" />
+    <None Include="resources\shaders\darken_color_frag.glsl" />
+    <None Include="resources\shaders\darken_color_vertex.glsl" />
+    <None Include="resources\shaders\discard_white_frag.glsl" />
+    <None Include="resources\shaders\discard_white_vertex.glsl" />
+    <None Include="resources\shaders\slider_frag.glsl" />
+    <None Include="resources\shaders\slider_vertex.glsl" />
+    <None Include="resources\shaders\texture_frag.glsl" />
+    <None Include="resources\shaders\texture_vertex.glsl" />
+    <None Include="resources\shaders\text_frag.glsl" />
+    <None Include="resources\shaders\text_vertex.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

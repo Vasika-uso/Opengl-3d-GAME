@@ -5,9 +5,16 @@
 #include "utility.h"
 #include "src/GLFW_WINDOW_SLOTS_IMPLEMENTATION.h"
 #include "src/FMOD_SOUND_IMPLEMENTATION.h"
-#include "src/GLOBALS.h"
-#include "src/MATH_MACRO_IMPLEMENTATION.h"
+#include "src/TEXT.h"
 
+
+
+Text* logger;
+int log_offset__ = 0;
+inline void LOG(std::string text) {
+	logger->drawText(text, 5, (1050 - log_offset__), 0.5f, vec3(0.0f, 0.0f, 0.0f));
+	log_offset__ += 50;
+}
 
 
 int main()
@@ -52,9 +59,11 @@ int main()
 		return -1;
 	}
 
+	
+
 	Shader ourShader("resources/shaders/7.4.camera_vertex.glsl", "resources/shaders/7.4.camera_frag.glsl");
 	Shader modelShader("resources/shaders/1.model_vertex.glsl", "resources/shaders/1.model_frag.glsl");
-
+	logger = new Text(window, "resources/fonts/OpenSans-Light.ttf");
 
 	// configure global opengl state
 	// -----------------------------
@@ -389,6 +398,7 @@ int main()
 
 	while (!glfwWindowShouldClose(window))
 	{
+		
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		// translate camera box
 		playerbox->mMin = +camera.Position;
@@ -467,7 +477,8 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f); // clear viewport with a blue color
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear depth
 		glEnable(GL_DEPTH_TEST); // enable depth testing
-
+//
+		LOG("sexy");
 		// activate shader
 		ourShader.use();
 
@@ -565,7 +576,17 @@ int main()
 			should_deagle_shoot = false;
 		}
 		for (int i = 0; i < bulletPositions.size(); i++) {
-			bulletPositions[i] += camera.Front;// *vec3(2.0f);
+			
+			////////////////////////
+			//Sphere bulletSphere(bulletPositions[i], 0.05f);
+			//glm::vec3 dir;
+			//if (Intersect(bulletSphere, *plane)) {
+			//     dir = camera.Front - 2.0f * glm::dot(camera.Front, glm::vec3(0.0f, 0.0f, 0.0f)) * glm::vec3(0.0f, 0.0f, 0.0f);
+
+			//}
+			//else dir = camera.Front;
+			bulletPositions[i] += camera.Front;// dir;
+
 			model = glm::translate(glm::mat4(1.0f), bulletPositions[i]);
 			model = glm::scale(model, vec3(0.01f, 0.01f, 0.01f));
 			ourShader.setMat4("model", model);
@@ -744,6 +765,7 @@ int main()
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+		log_offset__ = 0;
 	}
 
 	// optional: de-allocate all resources once they've outlived their purpose:
