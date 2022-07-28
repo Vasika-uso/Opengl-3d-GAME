@@ -270,6 +270,71 @@ float s_rand(float _min, float _max)
 	return randomNum(std::mt19937(time(NULL)));
 }
 
+bool TestSidePlane(float start, float end, float negd, const vec3& norm,
+	std::vector<std::pair<float, vec3>>& out)
+{
+	float denom = end - start;
+	if (Math::NearZero(denom))
+	{
+		return false;
+	}
+	else
+	{
+		float numer = -start + negd;
+		float t = numer / denom;
+		// Test that t is within bounds
+		if (t >= 0.0f && t <= 1.0f)
+		{
+			out.emplace_back(t, norm);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+}
 
+bool Intersect(const LineSegment& l, const AABB& b, float& outT,
+	vec3& outNorm)
+{
+	// Vector to save all possible t values, and normals for those sides
+	std::vector<std::pair<float, vec3>> tValues;
+	// Test the x planes
+	TestSidePlane(l.mStart.x, l.mEnd.x, b.mMin.x, vec3(-1.0f, 0.0f, 0.0f),
+		tValues);
+	TestSidePlane(l.mStart.x, l.mEnd.x, b.mMax.x, vec3(1.0f, 0.0f, 0.0f),
+		tValues);
+	// Test the y planes
+	TestSidePlane(l.mStart.y, l.mEnd.y, b.mMin.y, vec3(0.0f, -1.0f, 0.0f),
+		tValues);
+	TestSidePlane(l.mStart.y, l.mEnd.y, b.mMax.y, vec3(0.0f, 1.0f, 0.0f),
+		tValues);
+	// Test the z planes
+	TestSidePlane(l.mStart.z, l.mEnd.z, b.mMin.z, vec3(0.0f, 0.0f, -1.0f),
+		tValues);
+	TestSidePlane(l.mStart.z, l.mEnd.z, b.mMax.z, vec3(0.0f, 0.0f, 1.0f),
+		tValues);
 
+	// Sort the t values in ascending order
+	std::sort(tValues.begin(), tValues.end(), [](
+		const std::pair<float, vec3>& a,
+		const std::pair<float, vec3>& b) {
+			return a.first < b.first;
+		});
+	// Test if the box contains any of these points of intersection
+	vec3 point;
+	for (auto& t : tValues)
+	{
+		point = l.PointOnSegment(t.first);
+		if (b.Contains(point))
+		{
+			outT = t.first;
+			outNorm = t.second;
+			return true;
+		}
+	}
 
+	//None of the intersections are within bounds of box
+	return false;
+}
