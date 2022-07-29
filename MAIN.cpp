@@ -420,10 +420,10 @@ int main()
 		lastFrame = currentFrame;
 
 		// Check if the camera should jump anymore...
-		if (camera.should_jump && jump_cooldown > 1.0f) {
+		if (camera.should_jump && jump_cooldown > 0.0f) {
 			jump_cooldown = 0.0f;
 			camera.should_jump = false;
-			camera.Position.y += 0.9f;
+			camera.Position.y += 0.1f;
 		}
 		else {
 			jump_cooldown += deltaTime;
@@ -612,15 +612,10 @@ int main()
 					ss << "found -- " << bulletPositions[i].x << " / " << bulletPositions[i].y <<  " / " << bulletPositions[i].z << std::endl;
 					LOG(ss.str());
 					ss.clear();
-					
 					vec3 bullNorm = glm::normalize(bulletFronts[i]);
 					vec3 norm = glm::normalize(__norm);
+					// equation for reflection
 					dir = bullNorm - 2.0f * glm::dot(bullNorm, norm) * norm;
-					ss << "data -- .bullNorm>>" << bullNorm.x << " / " << bullNorm.y << " / " << bullNorm.z 
-						<< " / .norm>>" << norm.x << " / " << norm.y << " / " << norm.z
-						<< " / .dir>>" << dir.x << " / " << dir.y << " / " << dir.z << std::endl;
-					LOG(ss.str());
-					ss.clear();
 				}
 			}
 			// Figure out difference between original (unit x) and new
@@ -643,7 +638,7 @@ int main()
 				axis.Normalize();
 				bulletQua[i] = Quaternion(axis, angle);
 			}
-			bulletPositions[i] += dir;// dir;
+			bulletPositions[i] += dir * (0.1f * deltaTime);// changed speed
 
 			
 
