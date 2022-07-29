@@ -32,6 +32,7 @@ vec3 saveLastPostion = camera.Position;
 vec3 bulletDir = camera.Front;
 vec3 bulletPos = saveLastPostion;
 std::vector<vec3> bulletPositions;
+std::vector<vec3> bulletFronts;
 // Automatic gun boolean , means if the gun should move Back or Forth>..XD
 bool should_move = true;
 // if gravity is enabled

@@ -1,9 +1,6 @@
 #pragma once
 #include "NewMath.h"
-// GLM is a library for Opengl math
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+
 // random for random gun movement , etc.
 #include <random>
 

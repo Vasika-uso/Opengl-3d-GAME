@@ -404,7 +404,7 @@ int main()
 
 	// render loop
 	// -----------
-
+	std::vector<Quaternion> bulletQua;
 	while (!glfwWindowShouldClose(window))
 	{
 		
@@ -575,21 +575,25 @@ int main()
 		if ((Shooting) && (_ShootingDelay > 0.1f) && (display_gun)) {
 			// Create line segment
 			bulletPositions.push_back(camera.Position);	
+			bulletFronts.push_back(camera.Front);
+			bulletQua.push_back(Quaternion::Identity);
 			_ShootingDelay = 0;
 		}
 		
 		if ((Shooting) && (display_deagle) && should_deagle_shoot) {
 			// Create line segment
 			bulletPositions.push_back(camera.Position);
+			bulletFronts.push_back(camera.Front);
+			bulletQua.push_back(Quaternion::Identity);
 			_ShootingDelay = 0;
 			should_deagle_shoot = false;
 		}
 		for (int i = 0; i < bulletPositions.size(); i++) {
 			
 			////////////////////////
-			const float segmentLength = 100.0f;
-			vec3 start = camera.Position;
-			vec3 dir = camera.Front;
+			const float segmentLength = 10.0f;
+			vec3 start = bulletPositions[i];
+			vec3 dir = bulletFronts[i];
 			vec3 end = start + dir * segmentLength;
 			LineSegment l(start, end);
 
@@ -597,21 +601,54 @@ int main()
 			// Initialize closestT to infinity, so first
 			// intersection will always update closestT
 			float closestT = Math::Infinity;
-			vec3 norm;
+			vec3 __norm;
 			float t;
 			// here is made to check for more planes instead of just one ,
 			// so read again Chapter 11
-			if (Intersect(l, *plane, t, norm)) {
+			if (Intersect(l, *plane, t, __norm)) {
 				if (t < closestT)
 				{
-					vec3 camNorm = glm::normalize(camera.Front);
-					dir = camNorm - 2.0f * glm::dot(camNorm, norm) * norm;
+					std::stringstream ss;
+					ss << "found -- " << bulletPositions[i].x << " / " << bulletPositions[i].y <<  " / " << bulletPositions[i].z << std::endl;
+					LOG(ss.str());
+					ss.clear();
+					
+					vec3 bullNorm = glm::normalize(bulletFronts[i]);
+					vec3 norm = glm::normalize(__norm);
+					dir = bullNorm - 2.0f * glm::dot(bullNorm, norm) * norm;
+					ss << "data -- .bullNorm>>" << bullNorm.x << " / " << bullNorm.y << " / " << bullNorm.z 
+						<< " / .norm>>" << norm.x << " / " << norm.y << " / " << norm.z
+						<< " / .dir>>" << dir.x << " / " << dir.y << " / " << dir.z << std::endl;
+					LOG(ss.str());
+					ss.clear();
 				}
 			}
-			else dir = camera.Front;
+			// Figure out difference between original (unit x) and new
+			float dot = glm::dot(vec3(1 , 0 , 0), dir);
+			float angle = Math::Acos(dot);
+			// Facing down X
+			if (dot > 0.9999f)
+			{
+				bulletQua[i] = Quaternion::Identity;
+			}
+			// Facing down -X
+			else if (dot < -0.9999f)
+			{
+				bulletQua[i] = Quaternion(Vector3::UnitZ, Math::Pi);
+			}
+			else
+			{
+				// Rotate about axis from cross product
+				Vector3 axis = Vector3::Cross(Vector3::UnitX, Vector3(dir.x ,dir.y , dir.z));
+				axis.Normalize();
+				bulletQua[i] = Quaternion(axis, angle);
+			}
 			bulletPositions[i] += dir;// dir;
 
+			
+
 			model = glm::translate(glm::mat4(1.0f), bulletPositions[i]);
+			model *= Matrix4::glm_CreateFromQuaternion(bulletQua[i]);
 			model = glm::scale(model, vec3(0.01f, 0.01f, 0.01f));
 			ourShader.setMat4("model", model);
 			bullet.Draw(ourShader);
@@ -619,6 +656,8 @@ int main()
 		if (!Shooting) {
 			if (!bulletPositions.empty()) {
 				bulletPositions.pop_back();
+				bulletFronts.pop_back();
+				bulletQua.pop_back();
 			}
 			should_deagle_shoot = true;
 		}

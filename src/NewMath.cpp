@@ -5,8 +5,10 @@
 // Released under the BSD License
 // See LICENSE in root directory for full details.
 // ----------------------------------------------------------------
-
+#pragma once
 #include "NewMath.h"
+
+
 
 const Vector2 Vector2::Zero(0.0f, 0.0f);
 const Vector2 Vector2::UnitX(1.0f, 0.0f);
@@ -236,4 +238,31 @@ Matrix4 Matrix4::CreateFromQuaternion(const class Quaternion& q)
 	mat[3][3] = 1.0f;
 
 	return Matrix4(mat);
+}
+
+glm::mat4 Matrix4::glm_CreateFromQuaternion(const class Quaternion& q)
+{
+	glm::mat4 mat;
+
+	mat[0][0] = 1.0f - 2.0f * q.y * q.y - 2.0f * q.z * q.z;
+	mat[0][1] = 2.0f * q.x * q.y + 2.0f * q.w * q.z;
+	mat[0][2] = 2.0f * q.x * q.z - 2.0f * q.w * q.y;
+	mat[0][3] = 0.0f;
+
+	mat[1][0] = 2.0f * q.x * q.y - 2.0f * q.w * q.z;
+	mat[1][1] = 1.0f - 2.0f * q.x * q.x - 2.0f * q.z * q.z;
+	mat[1][2] = 2.0f * q.y * q.z + 2.0f * q.w * q.x;
+	mat[1][3] = 0.0f;
+
+	mat[2][0] = 2.0f * q.x * q.z + 2.0f * q.w * q.y;
+	mat[2][1] = 2.0f * q.y * q.z - 2.0f * q.w * q.x;
+	mat[2][2] = 1.0f - 2.0f * q.x * q.x - 2.0f * q.y * q.y;
+	mat[2][3] = 0.0f;
+
+	mat[3][0] = 0.0f;
+	mat[3][1] = 0.0f;
+	mat[3][2] = 0.0f;
+	mat[3][3] = 1.0f;
+
+	return mat;
 }

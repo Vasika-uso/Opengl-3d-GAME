@@ -7,10 +7,14 @@
 // ----------------------------------------------------------------
 
 #pragma once
-
 #include <cmath>
 #include <memory.h>
 #include <limits>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+
 #undef near
 #undef far
 namespace Math
@@ -784,6 +788,7 @@ public:
 
 	// Create a rotation matrix from a quaternion
 	static Matrix4 CreateFromQuaternion(const class Quaternion& q);
+	static glm::mat4 Matrix4::glm_CreateFromQuaternion(const class Quaternion& q);
 
 	static Matrix4 CreateTranslation(const Vector3& trans)
 	{
