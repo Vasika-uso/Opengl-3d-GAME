@@ -404,7 +404,7 @@ int main()
 
 	// render loop
 	// -----------
-	std::vector<Quaternion> bulletQua;
+	vec3 houseWorldMat4;
 	while (!glfwWindowShouldClose(window))
 	{
 		
@@ -519,7 +519,7 @@ int main()
 		*/
 
 		modelShader.use();
-
+		   
 		// pass projection matrix to shader (note that in this case it could change every frame)
 		projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		modelShader.setMat4("projection", projection);
@@ -528,8 +528,8 @@ int main()
 		view = camera.GetViewMatrix();
 		modelShader.setMat4("view", view);
 
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(20.0f, -0.0f, 20.0f));
-		model = glm::scale(glm::mat4(1.0f), glm::vec3(0.2f, 0.2f, 0.2f));
+		model = glm::translate(glm::mat4(1.0f), houseWorldMat4);
+		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
 		modelShader.setMat4("model", model);
 		cottage.Draw(modelShader);
 
@@ -609,7 +609,8 @@ int main()
 				if (t < closestT)
 				{
 					std::stringstream ss;
-					ss << "found -- " << bulletPositions[i].x << " / " << bulletPositions[i].y <<  " / " << bulletPositions[i].z << std::endl;
+					ss << "Touched at -- " << bulletPositions[i].x << " / " << bulletPositions[i].y <<  " / " << bulletPositions[i].z << std::endl;
+					//houseWorldMat4 = bulletPositions[i];
 					LOG(ss.str());
 					ss.clear();
 					vec3 bullNorm = glm::normalize(bulletFronts[i]);
@@ -638,7 +639,7 @@ int main()
 				axis.Normalize();
 				bulletQua[i] = Quaternion(axis, angle);
 			}
-			bulletPositions[i] += dir * (0.1f * deltaTime);// changed speed
+			bulletPositions[i] += dir * (50.0f * deltaTime);// changed speed
 
 			
 
@@ -649,10 +650,14 @@ int main()
 			bullet.Draw(ourShader);
 		}
 		if (!Shooting) {
-			if (!bulletPositions.empty()) {
-				bulletPositions.pop_back();
-				bulletFronts.pop_back();
-				bulletQua.pop_back();
+			if (!bulletPositions.empty() && 
+				(((bulletPositions[0].x - camera.Position.x) > 100) ||
+				((bulletPositions[0].y - camera.Position.y) > 100) ||
+				((bulletPositions[0].z - camera.Position.z) > 100)))
+			{
+				bulletPositions.pop_front();
+				bulletFronts.pop_front();
+				bulletQua.pop_front();
 			}
 			should_deagle_shoot = true;
 		}
