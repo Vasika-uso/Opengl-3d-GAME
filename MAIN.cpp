@@ -79,9 +79,10 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	unsigned int boxVAO , planeVAO , sqVAO;
+	unsigned int boxVAO , planeVAO , sqVAO , wallVAO;
 	AABB* playerbox;
 	AABB* plane;
+	AABB* wall;
 /* ENTERING SCOPE ----------------------------------------------------------*/ {
 		// set up vertex data (and buffer(s)) and configure vertex attributes
 		// ------------------------------------------------------------------
@@ -256,7 +257,59 @@ int main()
 			 5.5f,  0.0f,  5.5f,  1.0f, 0.0f,
 			-5.5f,  0.0f,  5.5f,  0.0f, 0.0f,
 			-5.5f,  0.0f, -5.5f,  0.0f, 1.0f
-/* LEAVING SCOPE ----------------------------------------------------------*/ };
+        };
+		float wallVertices[] = {
+			// positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
+			// 5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+		   // -5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
+		   // -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+
+		   //  5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+		   // -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+		   //  5.0f, -0.5f, -5.0f,  2.0f, 2.0f
+
+			-5.5f, -5.5f, -0.2f,  0.0f, 0.0f,
+			 5.5f, -5.5f, -0.2f,  1.0f, 0.0f,
+			 5.5f,  5.5f, -0.2f,  1.0f, 1.0f,
+			 5.5f,  5.5f, -0.2f,  1.0f, 1.0f,
+			-5.5f,  5.5f, -0.2f,  0.0f, 1.0f,
+			-5.5f, -5.5f, -0.2f,  0.0f, 0.0f,
+				 			 
+			-5.5f, -5.5f,  0.2f,  0.0f, 0.0f,
+			 5.5f, -5.5f,  0.2f,  1.0f, 0.0f,
+			 5.5f,  5.5f,  0.2f,  1.0f, 1.0f,
+			 5.5f,  5.5f,  0.2f,  1.0f, 1.0f,
+			-5.5f,  5.5f,  0.2f,  0.0f, 1.0f,
+			-5.5f, -5.5f,  0.2f,  0.0f, 0.0f,
+				   			 
+			-5.5f,  5.5f,  0.2f,  1.0f, 0.0f,
+			-5.5f,  5.5f, -0.2f,  1.0f, 1.0f,
+			-5.5f, -5.5f, -0.2f,  0.0f, 1.0f,
+			-5.5f, -5.5f, -0.2f,  0.0f, 1.0f,
+			-5.5f, -5.5f,  0.2f,  0.0f, 0.0f,
+			-5.5f,  5.5f,  0.2f,  1.0f, 0.0f,
+					   		
+			 5.5f,  5.5f,  0.2f,  1.0f, 0.0f,
+			 5.5f,  5.5f, -0.2f,  1.0f, 1.0f,
+			 5.5f, -5.5f, -0.2f,  0.0f, 1.0f,
+			 5.5f, -5.5f, -0.2f,  0.0f, 1.0f,
+			 5.5f, -5.5f,  0.2f,  0.0f, 0.0f,
+			 5.5f,  5.5f,  0.2f,  1.0f, 0.0f,
+				  			 
+			-5.5f, -5.5f, -0.2f,  0.0f, 1.0f,
+			 5.5f, -5.5f, -0.2f,  1.0f, 1.0f,
+			 5.5f, -5.5f,  0.2f,  1.0f, 0.0f,
+			 5.5f, -5.5f,  0.2f,  1.0f, 0.0f,
+			-5.5f, -5.5f,  0.2f,  0.0f, 0.0f,
+			-5.5f, -5.5f, -0.2f,  0.0f, 1.0f,
+			 		   		 
+			-5.5f,  5.5f, -0.2f,  0.0f, 1.0f,
+			 5.5f,  5.5f, -0.2f,  1.0f, 1.0f,
+			 5.5f,  5.5f,  0.2f,  1.0f, 0.0f,
+			 5.5f,  5.5f,  0.2f,  1.0f, 0.0f,
+			-5.5f,  5.5f,  0.2f,  0.0f, 0.0f,
+			-5.5f,  5.5f, -0.2f,  0.0f, 1.0f
+		};	 
 
 
 
@@ -279,6 +332,20 @@ int main()
 					plane->UpdateMinMax(glm::vec3(point.x, point.y, point.z));
 				}
 			}
+		}
+		// AABB collision
+		ppoints.clear();
+
+		for (unsigned int a = 0; a < sizeof(wallVertices) / sizeof(wallVertices[0]); a = a + 5) {
+			ppoints.push_back(vec3(wallVertices[a], wallVertices[a + 1], wallVertices[a + 2]));
+		}
+		// create a plane with 10x10 smaller planes
+		// update the Min/Max points accordingly
+		wall = new AABB(ppoints[0], ppoints[0]);
+		for (size_t i = 1; i < ppoints.size(); i++)
+		{
+		   glm::vec4 point = (glm::vec4(ppoints[i].x, ppoints[i].y, ppoints[i].z, 1.0f));
+		   wall->UpdateMinMax(glm::vec3(point.x, point.y, point.z));	
 		}
 
 
@@ -322,7 +389,22 @@ int main()
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 		glEnableVertexAttribArray(1);
 
-	}
+
+		//create wall
+		unsigned int VBO3;
+		glGenVertexArrays(1, &wallVAO);
+		glGenBuffers(1, &VBO3);
+		glBindVertexArray(wallVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO3);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(wallVertices), wallVertices, GL_STATIC_DRAW);
+		// position attribute
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+		// texture coord attribute
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
+
+/* LEAVING SCOPE ----------------------------------------------------------*/ }
 
 
 
@@ -605,11 +687,27 @@ int main()
 			float t;
 			// here is made to check for more planes instead of just one ,
 			// so read again Chapter 11
+			// check for planes
 			if (Intersect(l, *plane, t, __norm)) {
 				if (t < closestT)
 				{
 					std::stringstream ss;
 					ss << "Touched at -- " << bulletPositions[i].x << " / " << bulletPositions[i].y <<  " / " << bulletPositions[i].z << std::endl;
+					//houseWorldMat4 = bulletPositions[i];
+					LOG(ss.str());
+					ss.clear();
+					vec3 bullNorm = glm::normalize(bulletFronts[i]);
+					vec3 norm = glm::normalize(__norm);
+					// equation for reflection
+					dir = bullNorm - 2.0f * glm::dot(bullNorm, norm) * norm;
+				}
+			}
+			//check for walls
+			if (Intersect(l, *wall, t, __norm)) {
+				if (t < closestT)
+				{
+					std::stringstream ss;
+					ss << "Touched at -- " << bulletPositions[i].x << " / " << bulletPositions[i].y << " / " << bulletPositions[i].z << std::endl;
 					//houseWorldMat4 = bulletPositions[i];
 					LOG(ss.str());
 					ss.clear();
@@ -651,9 +749,9 @@ int main()
 		}
 		if (!Shooting) {
 			if (!bulletPositions.empty() && 
-				(((bulletPositions[0].x - camera.Position.x) > 100) ||
-				((bulletPositions[0].y - camera.Position.y) > 100) ||
-				((bulletPositions[0].z - camera.Position.z) > 100)))
+				(((bulletPositions[0].x - camera.Position.x) > 50) ||
+				((bulletPositions[0].y - camera.Position.y) > 50) ||
+				((bulletPositions[0].z - camera.Position.z) > 50)))
 			{
 				bulletPositions.pop_front();
 				bulletFronts.pop_front();
@@ -678,7 +776,12 @@ int main()
 				
 			}
 		}
-
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+		ourShader.setMat4("model", model);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture3);
+		glBindVertexArray(wallVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 		// update FMOD system
 		system->update();
 
